@@ -1,0 +1,23 @@
+* Equivalent circuit model for passive.ckt
+.SUBCKT passive po1
+Vsp1 po1 p1 0
+Vsr1 p1 pr1 0
+Rp1 pr1 0 50
+Ru1 u1 0 50
+Fr1 u1 0 Vsr1 -1
+Fu1 u1 0 Vsp1 -1
+Ry1 y1 0 1
+Gy1 p1 0 y1 0 -0.02
+Rx1 x1 0 1
+Cx1 x1 0 1.07766547878719e-12
+Gx1_1 x1 0 u1 0 -0.235736201927526
+Rx2 x2 0 1
+Cx2 x2 0 8.3793585328953e-12
+Gx2_1 x2 0 u1 0 -1.65758203565937
+Rx3 x3 0 1
+Cx3 x3 0 5.09971748755073e-11
+Gx3_1 x3 0 u1 0 -1.41964177973107
+Gyc1_1 y1 0 x1 0 1
+Gyc1_2 y1 0 x2 0 -1
+Gyc1_3 y1 0 x3 0 1
+.ENDS
