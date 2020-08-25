@@ -1,24 +1,25 @@
-function [time,voltage] = dummyFunction(t_res, f_rep, waveform, rawWaveformTime, rawWaveformSignal)
+function [time, signal, freq, fftSignal] = dummyFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal)
 %DUMMYFUNCTION This function selects one of several output waveforms to
 %plot then outputs the function and fourier transform of that function
 %   Functions include
-%       - 'custom' - A custom input
+%       - 'Custom' - A custom input
 %       - 'gPulse' - A Gaussian Pulse
 %       - 'gEdge' - A Gaussian Edge
 %       - 'RC_Edge' - An RC Edge
 %       - 'Cos' - A cosine function
 %   Internal parameters are set by directly modifying the function
 
-%% Sets axes
-if(strcmp(waveform,'custom')
-    time = rawWaveformTime(1:end-1)  %Removing last time point
-    n = size(time)
-    n = n(2)
+%% Sets time/freq axes
+if(strcmp(waveform,'Custom'))
+    time = rawWaveformTime(1:end-1);  %Removing last time point
+    n = size(time);
+    n = n(2);
     t_res  = time(2)-time(1); % temporal resolution
     f_res = 1/t_res;
-    t_rep = interpTimeDbl(end) -time(1); %Rep rate shifted up to real value
+    t_rep = rawWaveformTime(end) -time(1); %Rep rate shifted up to real value
     f_rep = 1/t_rep;
-    f_LT_array = linspace(-f_res/2,f_res/2,n)
+    freq = linspace(-f_res/2,f_res/2,n)
+    
 else
     % t_res = 0.05*c.nano; % temporal resolution
     f_res = 1/t_res;
@@ -31,11 +32,10 @@ else
 
     tLength = length(time);                  %Should be divisible by 2!! for halves of response
     n = tLength;
-
-
+    
     fP = f_res*(0:(tLength/2))/tLength;         % Since FT symmetric now
     %f  = f_res*(-tLength/2:tLength/2)/tLength;        % Full FT frequency domain
-    f = linspace(-f_res/2, f_res/2, n)
+    freq = linspace(-f_res/2, f_res/2, n)
 end
 %% Defines functions (Modify Coefficients)
 switch waveform
@@ -59,9 +59,12 @@ switch waveform
         nPer = 50; % number of periods
         fn = cos(2*nPer*pi*f_rep*time);
 
+    case 'Custom'
+        fn = rawWaveformSignal(1:end-1);
     otherwise
         disp('invalid input')
 end
-
+signal = fn;
+fftSignal = 0; 
 end
 
