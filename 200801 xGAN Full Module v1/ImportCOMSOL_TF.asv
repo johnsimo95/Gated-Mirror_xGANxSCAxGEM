@@ -6,18 +6,22 @@ function [trFnRaw, trFnSymmetric] = ImportCOMSOL_TF(filename, portVoltage, makeS
     data=table2array(data);
 
     trFnRaw.freq = data(:,1);
-    trFnRaw.fieldTF = data(:,2)./portVoltage;
+    trFnRaw.field = data(:,2);
     %Default state of mirror!
     
     if (makeSymmetric)
         comsolFreqStep=trFnRaw.freq(2,1)-trFnRaw.freq(1,1)
         posFreq=trFnRaw.freq;
         negFreq=-1*flip(posFreq);
-        trFnSymmetric.freq = [posFreq;negFreq];
+        comsolFreq=[posFreq;negFreq];
 
-        mirrorTFpos=(trFnRaw.fieldTF);%/length(posFreq);
+        
+        mirrorTFpos=(trFnRaw.field/portVoltage);%/length(posFreq);
+        % mirrorTFposPad=mirrorTFpos(end)*ones(length(posFreqPad),1);
+        mirrorTFpos=[mirrorTFpos];
         mirrorTFneg=flip(conj(mirrorTFpos));
-        trFnSymmetric.fieldTF = [mirrorTFpos;mirrorTFneg];
+        
+        mirrorTF=[mirrorTFpos;mirrorTFneg];
     end
 
 end
