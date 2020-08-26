@@ -65,6 +65,6 @@ switch waveform
         disp('invalid input')
 end
 signal = fn;
-fftSignal = 0; 
+fftSignal = fft(signal); 
 end
 
