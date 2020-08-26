@@ -11,14 +11,14 @@ function [time, signal, freq, fftSignal] = dummyFunction(waveform, t_res, f_rep,
 
 %% Sets time/freq axes
 if(strcmp(waveform,'Custom'))
-    time = rawWaveformTime(1:end-1);  %Removing last time point
+    time = rawWaveformTime(1:end);  %Removing last time point
     n = size(time);
     n = n(2);
     t_res  = time(2)-time(1); % temporal resolution
     f_res = 1/t_res;
     t_rep = rawWaveformTime(end) -time(1); %Rep rate shifted up to real value
     f_rep = 1/t_rep;
-    freq = linspace(-f_res/2,f_res/2,n)
+    freq = linspace(-f_res/2,f_res/2,n);
     
 else
     % t_res = 0.05*c.nano; % temporal resolution
@@ -27,7 +27,7 @@ else
     t_rep = 1/f_rep; %period of the repetition
 
     timeN = -t_rep/2:t_res:-t_res;          % From negative start just to before 0
-    time0P = 0:t_res:t_rep/2-t_res;         % From 0 to maximum just before maximum positive
+    time0P = 0:t_res:t_rep/2;         % From 0 to maximum just before maximum positive
     time = [timeN time0P];                  % Combine two
 
     tLength = length(time);                  %Should be divisible by 2!! for halves of response
@@ -56,11 +56,11 @@ switch waveform
         fn = rescale(fn,-0.5, 0.5);
         
     case 'Cos'
-        nPer = 50; % number of periods
+        nPer = 200; % number of periods
         fn = cos(2*nPer*pi*f_rep*time);
 
     case 'Custom'
-        fn = rawWaveformSignal(1:end-1);
+        fn = rawWaveformSignal(1:end);
     otherwise
         disp('invalid input')
 end
