@@ -1,4 +1,4 @@
-function [time, signal, freq, fftSignal] = dummyFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal)
+function [time, signal, freq, fftSignal] = inputFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal)
 %DUMMYFUNCTION This function selects one of several output waveforms to
 %plot then outputs the function and fourier transform of that function
 %   Functions include
