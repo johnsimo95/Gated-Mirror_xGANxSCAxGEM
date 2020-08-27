@@ -45,11 +45,11 @@ switch waveform
         gEdge0P = (gEdgeN(1)+1-exp(-gEdgeCoef*timeN.^2));
         fn = [gEdgeN gEdge0P];
     case 'gPulse'
-        gaussCoef = 5e15;
+        gaussCoef = 1e18;
         fn = exp(-gaussCoef*time.^2);
         
     case 'RC_Edge'
-        rcCoef = 1e-9;
+        rcCoef = 10e-9;
         RC_EdgeN = 1-exp(-((timeN-timeN(1))/rcCoef));
         RC_Edge0P  = RC_EdgeN(end)*exp(-time0P/rcCoef);
         fn = [RC_EdgeN RC_Edge0P];
