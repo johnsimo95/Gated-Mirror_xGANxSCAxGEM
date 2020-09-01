@@ -41,9 +41,9 @@ end
 switch waveform
     case 'gEdge'
         gEdgeCoef = tuningParam;
-        gEdgeN = -exp(-gEdgeCoef*timeN.^2);
-        gEdge0P = -(gEdgeN(1)+1-exp(-gEdgeCoef*flip(time0P).^2));
-        fn = flip([gEdgeN gEdge0P]);
+        gEdgeN = exp(-gEdgeCoef*timeN.^2);
+        gEdge0P = (gEdgeN(1)+1-exp(-gEdgeCoef*timeN.^2));
+        fn = [gEdgeN gEdge0P];
     case 'gPulse'
         gaussCoef = tuningParam;
         fn = exp(-gaussCoef*time.^2);
