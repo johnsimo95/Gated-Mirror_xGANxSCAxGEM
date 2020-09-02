@@ -54,7 +54,23 @@ switch waveform
         RC_Edge0P  = RC_EdgeN(end)*exp(-time0P/rcCoef);
         fn = [RC_EdgeN RC_Edge0P];
         fn = rescale(fn,-0.5, 0.5);
+    
+    case 'Heaviside'
+        delay = 50;
+        lengthOff = tuningParam;
+        ltot = n;
+        heav.A = ones(1,delay);
+        heav.B = zeros(1,lengthOff);
+        heav.C = ones(1,ltot - delay - lengthOff);
+
+        fn = [heav.A heav.B heav.C];
         
+    case 'ErrorFn'
+        testFnPos = erf(linspace(-tuningParam, tuningParam, (n-1)/2));
+        testFnNeg = flip(testFnPos);
+        fn = [testFnNeg -1 testFnPos];
+
+
     case 'Cos'
         nPer = tuningParam; % number of periods
         fn = cos(2*nPer*pi*f_rep*time);
