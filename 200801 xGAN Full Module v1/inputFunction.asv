@@ -1,4 +1,4 @@
-function [time, signal, freq, fftSignal] = inputFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal, tuningParam)
+function [time, signal, freq, fftSignal] = inputFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal, tuningParam, timeShift)
 %DUMMYFUNCTION This function selects one of several output waveforms to
 %plot then outputs the function and fourier transform of that function
 %   Functions include
@@ -35,15 +35,16 @@ else
     
     %fP = f_res*(0:(tLength/2))/tLength;         % Since FT symmetric now
     %f  = f_res*(-tLength/2:tLength/2)/tLength;        % Full FT frequency domain
-    freq = linspace(-f_res/2, f_res/2, n)
+    freq = linspace(-f_res/2, f_res/2, n);
 end
 %% Defines functions (Modify Coefficients)
 switch waveform
     case 'gEdge'
         gEdgeCoef = tuningParam;
-        gEdgeN = exp(-gEdgeCoef*timeN.^2);
-        gEdge0P = (gEdgeN(1)+1-exp(-gEdgeCoef*timeN.^2));
-        fn = [gEdgeN gEdge0P];
+        gEdgeN = -exp(-gEdgeCoef*timeN.^2);
+        gEdge0P = -(gEdgeN(1)+1-exp(-gEdgeCoef*flip(time0P).^2));
+        fn = flip([gEdgeN gEdge0P]);
+        
     case 'gPulse'
         gaussCoef = tuningParam;
         fn = exp(-gaussCoef*time.^2);
@@ -55,6 +56,25 @@ switch waveform
         fn = [RC_EdgeN RC_Edge0P];
         fn = rescale(fn,-0.5, 0.5);
         
+    case 'Heaviside'
+        delay = 50;
+        lengthOff = tuningParam;
+        ltot = n;
+        heav.A = ones(1,delay);
+        heav.B = zeros(1,lengthOff);
+        heav.C = ones(1,ltot - delay - lengthOff);
+
+        fn = [heav.A heav.B heav.C];
+        
+    case 'ErrorFn'
+        slowEdge = 5;
+        fastLength = 200;
+        testFnNeg = erf(linspace(-slowEdge, slowEdge, (n-1)/2));
+        testFnPos = erf(linspace(-tuningParam, tuningParam, (n-1)/2));
+        testFnPos = flip(testFnPos);
+        fn = [testFnNeg 1 testFnPos];
+
+
     case 'Cos'
         nPer = tuningParam; % number of periods
         fn = cos(2*nPer*pi*f_rep*time);
@@ -64,7 +84,8 @@ switch waveform
     otherwise
         disp('invalid input')
 end
-signal = fn;
+signal = circshift(fn, timeShift);
+
 fftSignal = fft(signal); 
 end
 

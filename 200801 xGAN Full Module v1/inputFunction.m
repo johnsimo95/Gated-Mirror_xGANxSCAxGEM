@@ -1,4 +1,4 @@
-function [time, signal, freq, fftSignal] = inputFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal, tuningParam)
+function [time, signal, freq, fftSignal] = inputFunction(waveform, t_res, f_rep,  rawWaveformTime, rawWaveformSignal, tuningParam, timeShift)
 %DUMMYFUNCTION This function selects one of several output waveforms to
 %plot then outputs the function and fourier transform of that function
 %   Functions include
@@ -35,7 +35,7 @@ else
     
     %fP = f_res*(0:(tLength/2))/tLength;         % Since FT symmetric now
     %f  = f_res*(-tLength/2:tLength/2)/tLength;        % Full FT frequency domain
-    freq = linspace(-f_res/2, f_res/2, n)
+    freq = linspace(-f_res/2, f_res/2, n);
 end
 %% Defines functions (Modify Coefficients)
 switch waveform
@@ -44,6 +44,7 @@ switch waveform
         gEdgeN = -exp(-gEdgeCoef*timeN.^2);
         gEdge0P = -(gEdgeN(1)+1-exp(-gEdgeCoef*flip(time0P).^2));
         fn = flip([gEdgeN gEdge0P]);
+        
     case 'gPulse'
         gaussCoef = tuningParam;
         fn = exp(-gaussCoef*time.^2);
@@ -54,7 +55,7 @@ switch waveform
         RC_Edge0P  = RC_EdgeN(end)*exp(-time0P/rcCoef);
         fn = [RC_EdgeN RC_Edge0P];
         fn = rescale(fn,-0.5, 0.5);
-    
+        
     case 'Heaviside'
         delay = 50;
         lengthOff = tuningParam;
@@ -66,9 +67,12 @@ switch waveform
         fn = [heav.A heav.B heav.C];
         
     case 'ErrorFn'
-        testFnPos = erf(linspace(-tuningParam, tuningParam, (n-1)/2));
-        testFnNeg = flip(testFnPos);
-        fn = [testFnNeg -1 testFnPos];
+        slowEdge = 3;
+        fastLength = 200;
+        testFnPos = erf(linspace(-tuningParam, tuningParam, fastLength));
+        testFnNeg = erf(linspace(-slowEdge, slowEdge, n - fastLength));
+        testFnPos = flip(testFnPos);
+        fn = [testFnNeg testFnPos];
 
 
     case 'Cos'
@@ -80,7 +84,8 @@ switch waveform
     otherwise
         disp('invalid input')
 end
-signal = fn;
+signal = circshift(fn, timeShift);
+
 fftSignal = fft(signal); 
 end
 
