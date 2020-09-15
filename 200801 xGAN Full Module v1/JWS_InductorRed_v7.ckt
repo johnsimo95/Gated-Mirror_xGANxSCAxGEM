@@ -1,0 +1,27 @@
+* Equivalent circuit model for JWS_InductorRed_v7.ckt
+.SUBCKT JWS_InductorRed_v7 po1
+Vsp1 po1 p1 0
+Vsr1 p1 pr1 0
+Rp1 pr1 0 50
+Ru1 u1 0 50
+Fr1 u1 0 Vsr1 -1
+Fu1 u1 0 Vsp1 -1
+Ry1 y1 0 1
+Gy1 p1 0 y1 0 -0.02
+Rx1 x1 0 1
+Fxc1_2 x1 0 Vx2 0.0848896125991628
+Cx1 x1 xm1 0.0519341331412508
+Vx1 xm1 0 0
+Gx1_1 x1 0 u1 0 -0.0772373232800854
+Rx2 x2 0 1
+Fxc2_1 x2 0 Vx1 -14.3826279952811
+Cx2 x2 xm2 0.0519341331412508
+Vx2 xm2 0 0
+Gx2_1 x2 0 u1 0 1.11087568808874
+Rx3 x3 0 1
+Cx3 x3 0 6.26676789039682
+Gx3_1 x3 0 u1 0 -2.03706714821625
+Gyc1_1 y1 0 x1 0 1
+Gyc1_2 y1 0 x2 0 1
+Gyc1_3 y1 0 x3 0 1
+.ENDS
