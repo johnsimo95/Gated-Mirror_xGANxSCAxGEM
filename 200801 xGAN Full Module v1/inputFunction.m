@@ -73,8 +73,24 @@ switch waveform
         testFnNeg = erf(linspace(-slowEdge, slowEdge, n - fastLength));
         testFnPos = flip(testFnPos);
         fn = [testFnNeg testFnPos];
-
-
+    
+    case 'GaussFilt'
+        fftFilter = exp(-(tuningParam*linspace(-1, 1, 2001).^2));
+        fftFilter = fft(fftFilter);
+        
+        A = 200;
+        B = 100;
+        lin = 800;
+        
+        heav.A = ones(1,A); 
+        heav.B = zeros(1,B);
+        heav.lin = linspace(0, 1, lin);
+        heav.C = ones(1,2001-(A+B+lin));
+        fnIn = [heav.A heav.B heav.lin heav.C];
+        fnMix = fft(fnIn).*fftFilter;
+        fn = ifft(fnMix);
+        
+        
     case 'Cos'
         nPer = tuningParam; % number of periods
         fn = cos(2*nPer*pi*f_rep*time);
